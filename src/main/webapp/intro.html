@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>학생 성적표 조회 홈페이지</h1> <!--첫페이지에 보여줄 인트로 창-->
+    <script>
+        let getCnt;
+        localStorage.keyname = 'cnt';
+
+        if(localStorage.getItem('cnt') == null){
+            localStorage.setItem('cnt',1);
+            document.write("<h3>총 방문자 수 : 1 명<h3>");
+        } else {
+            let cnt2 = localStorage.getItem('cnt');
+            localStorage.setItem('cnt',(parseInt(cnt2))+1);
+            getCnt = localStorage.getItem('cnt');
+            document.write("<h3>총 방문자 수 : " + getCnt + " 명<h3>");
+        }
+        
+    </script>
+</body>
+</html>
