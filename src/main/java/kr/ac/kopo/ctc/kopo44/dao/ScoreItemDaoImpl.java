@@ -21,7 +21,7 @@ public class ScoreItemDaoImpl implements ScoreItemDao {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
-			throw new IllegalStateException("jdbc 드라이버 로드 실패");
+			throw new IllegalStateException("jdbc 드라이버 로드 실패..!");
 		}
 	}
 
@@ -52,18 +52,17 @@ public class ScoreItemDaoImpl implements ScoreItemDao {
 	public List<ScoreItem> selectAll(int startIndex, int countPerPage) {
 		List<ScoreItem> results = new ArrayList<>();
 
-		String sql = "SELECT * FROM TABLE_NAME LIMIT ?, ?";
+		String sql = "SELECT * FROM " + TABLE_NAME + " LIMIT ?, ?";
 		// TRY RESOURCE CATCH문
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:33063/koposw44", "root", "koposw44");
 				PreparedStatement pstmt = conn.prepareStatement(sql);) {
-			pstmt.setInt(1, startIndex);
+			pstmt.setInt(1, startIndex - 1);
 			pstmt.setInt(2, countPerPage);
-
-			try (ResultSet rs = pstmt.executeQuery(sql);) {
+			try (ResultSet rs = pstmt.executeQuery();) {
 
 				while (rs.next()) {
 					String name = rs.getString("name");
-					int studentid = rs.getInt("COLUMN_ID");
+					int studentid = rs.getInt("studentid");
 					int kor = rs.getInt("kor");
 					int eng = rs.getInt("eng");
 					int mat = rs.getInt("mat");
@@ -155,22 +154,22 @@ public class ScoreItemDaoImpl implements ScoreItemDao {
 
 	@Override
 	public int RowCount() {
+
 		int rowcount = 0;
-		Connection conn;
-		try {
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:33063/koposw44", "root", "koposw44");
+		try (
+			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:33063/koposw44", "root", "koposw44");
 			Statement stmt = conn.createStatement();
-			ResultSet rset = stmt.executeQuery("SELECT * FROM " + TABLE_NAME);
+			ResultSet rset = stmt.executeQuery("SELECT COUNT(*) FROM " + TABLE_NAME);
+			){
 
 			while (rset.next()) {
-				rowcount++;
+				rowcount = rset.getInt(1);
 			}
 
-			return rowcount;
 		} catch (SQLException e) {
 			throw new IllegalStateException("count 실패 " + e.getMessage());
 		}
-
+		return rowcount;
 	}
 
 }

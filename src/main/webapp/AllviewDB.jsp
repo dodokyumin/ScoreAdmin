@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="EUC-KR"%>
+	pageEncoding="UTF-8"%>
 <%@page import="kr.ac.kopo.ctc.kopo44.service.ScoreItemServiceImpl"%>
 <%@page import="kr.ac.kopo.ctc.kopo44.service.ScoreItemService"%>
 <%@page import="kr.ac.kopo.ctc.kopo44.domain.ScoreItem"%>
@@ -8,24 +8,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
+<meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
 <body>
 	<table cellspacing=1 width=400 border=1>
 		<tr>
 			<td align=center>이름</td>
-			<td align=center>�й�</td>
-			<td align=center>����</td>
-			<td align=center>����</td>
-			<td align=center>����</td>
+			<td align=center>학번</td>
+			<td align=center>국어</td>
+			<td align=center>영어</td>
+			<td align=center>수학</td>
 		</tr>
 		<%
 		//String strcPage = request.getParameter("strcPage");
 		String strcPage = "1";
 		ScoreItemService scoreItemService = new ScoreItemServiceImpl();
 		List<ScoreItem> scoreItems = scoreItemService.selectAll(strcPage);
-		
 		
 		
 		
