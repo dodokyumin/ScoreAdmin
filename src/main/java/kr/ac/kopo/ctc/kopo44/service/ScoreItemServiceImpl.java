@@ -6,37 +6,49 @@ import kr.ac.kopo.ctc.kopo44.dao.ScoreItemDao;
 import kr.ac.kopo.ctc.kopo44.dao.ScoreItemDaoImpl;
 import kr.ac.kopo.ctc.kopo44.domain.ScoreItem;
 import kr.ac.kopo.ctc.kopo44.dto.Pagination;
+import kr.ac.kopo.ctc.kopo44.dto.ScoreItemDto;
 
 public class ScoreItemServiceImpl implements ScoreItemService {
 
-	private ScoreItemDao scoreItemDao;
-	
+	ScoreItemDao scoreItemDao = new ScoreItemDaoImpl();
+
 	private int countPerPage = 10;
-	
+	final int COUNT_PER_PAGE = 10;
+	final int PAGE_SIZE = 10;
+
 	@Override
-	public List<ScoreItem> selectAll(String strcPage) {
+	public ScoreItemDto selectAll(String strcPage) {
+		// 총 레코드 수 조회
+		// 페이지네이션 계싼
+		// 전제 목록 조회
+		// 전체 목록 조회 결과랑 페이지 네이션을 dto로 묶어서 반환
+		// 페이지네이션 계산
 		Pagination pagination = new Pagination();
 		int cPage = Integer.parseInt(strcPage);
-		
-		pagination.setCountPerPage(countPerPage); 
 		pagination.setcPage(cPage);
-		
-		int startIndex = ((pagination.getcPage()-1)*pagination.getCountPerPage() +1);
-		ScoreItemDao scoreItemDao = new ScoreItemDaoImpl();
+		pagination.setCountPerPage(countPerPage);
+
+		// 총 레코드 수 조회
+		int TOTAL_COUNT = getRowCount();
+
+		// 전체 목록 조회
+		int startIndex = ((pagination.getcPage() - 1) * pagination.getCountPerPage() + 1);
 		List<ScoreItem> scoreItem = scoreItemDao.selectAll(startIndex, countPerPage);
+
+		// 전체 목록 조회 결과랑 페이지 네이션을 dto로 묶어서 반환
+		ScoreItemDto scoreItemDto = new ScoreItemDto(scoreItem,
+				getPagination(cPage, COUNT_PER_PAGE, PAGE_SIZE, TOTAL_COUNT));
 		
-		return scoreItem;
-	}
-	
-	@Override
-	public ScoreItem selectOne(int studentid) {
-		
-		ScoreItem scoreItem = scoreItemDao.selectOne(studentid);
-		
-		return scoreItem;
+		return scoreItemDto;
 	}
 
-	
+	@Override
+	public ScoreItem selectOne(int studentid) {
+
+		ScoreItem scoreItem = scoreItemDao.selectOne(studentid);
+
+		return scoreItem;
+	}
 
 	@Override
 	// countPerPage 한페이지당 몇개의 리스트
@@ -46,29 +58,32 @@ public class ScoreItemServiceImpl implements ScoreItemService {
 		Pagination p = new Pagination();
 
 		// >>
-		int lastPage;
+		int totalPage;
 		if ((totalCount % countPerPage) > 0) {
-			lastPage = totalCount / countPerPage + 1;
+			totalPage = totalCount / countPerPage + 1;
 		} else {
-			lastPage = totalCount / countPerPage;
+			totalPage = totalCount / countPerPage;
 		}
 
-		//currPage
-		if (currPage > lastPage) {
-			currPage = lastPage;
+		// currPage
+		if (currPage > totalPage) {
+			currPage = totalPage;
 		} else if (currPage < 1) {
 			currPage = 1;
 		}
 		p.setcPage(currPage);
+		
+		//pageSize
+		p.setPageSize(pageSize);
 
 		// <<
 		p.setPpPage(1);
 		// >>
-		p.setNnPage(lastPage);
+		p.setNnPage(totalPage);
 
 		// >
-		if ((lastPage - currPage) < pageSize) {
-			p.setnPage(lastPage);
+		if ((totalPage - currPage) < pageSize) {
+			p.setnPage(totalPage);
 		} else {
 			p.setnPage((currPage / pageSize + 1) * 10 + 1);
 		}
@@ -79,8 +94,17 @@ public class ScoreItemServiceImpl implements ScoreItemService {
 			p.setpPage((currPage / pageSize) * 10);
 		}
 
+		// 첫 페이지 번호
+		int startPage = (currPage / pageSize) * pageSize + 1;	
+		if ((currPage % pageSize) == 0) {		
+			startPage -= pageSize;
+		}
+		p.setFirstPage(startPage);
 		
-
+		// 마지막 페이지 번호
+		int lastPage = (startPage + pageSize - 1) >= totalPage ? totalPage : (startPage + pageSize - 1);
+		p.setLastPage(lastPage);
+		
 		return p;
 	}
 
@@ -104,9 +128,11 @@ public class ScoreItemServiceImpl implements ScoreItemService {
 
 	@Override
 	public int getRowCount() {
+
 		int rowcount = scoreItemDao.RowCount();
 		return rowcount;
 	}
+
 
 	// public ScoreItemDao getScoreItemDao() {
 	// return scoreItemDao;

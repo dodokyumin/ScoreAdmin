@@ -154,7 +154,7 @@ public class ScoreItemDaoImpl implements ScoreItemDao {
 
 	@Override
 	public int RowCount() {
-
+		
 		int rowcount = 0;
 		try (
 			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:33063/koposw44", "root", "koposw44");

@@ -9,11 +9,11 @@ import kr.ac.kopo.ctc.kopo44.service.ScoreItemServiceImpl;
 
 public class ScoreItemDaoMock implements ScoreItemDao {
 
-	@Override
-	public ScoreItem create(ScoreItem ScoreItem) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public ScoreItem create(ScoreItem ScoreItem) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	@Override
 	public ScoreItem selectOne(int id) {
@@ -27,14 +27,38 @@ public class ScoreItemDaoMock implements ScoreItemDao {
 		return null;
 	}
 
-	@Override
-	public Pagination getPagination(int currPage, int countPerPage, int pageSize, int totalCount) {
-		ScoreItemService scoreItemService = new ScoreItemServiceImpl();
-		
-		
+//	@Override
+//	public Pagination getPagination(int currPage, int countPerPage, int pageSize, int totalCount) {
+//		ScoreItemService scoreItemService = new ScoreItemServiceImpl();
+//		
+//		
+//
+//		
+//		return null;
+//	}
 
-		
+	@Override
+	public ScoreItem insertOne(ScoreItem ScoreItem) {
+		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ScoreItem updatetOne(ScoreItem ScoreItem) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int deleteOne(int studentid) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int RowCount() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 }

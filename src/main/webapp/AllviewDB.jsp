@@ -4,6 +4,7 @@
 <%@page import="kr.ac.kopo.ctc.kopo44.service.ScoreItemService"%>
 <%@page import="kr.ac.kopo.ctc.kopo44.domain.ScoreItem"%>
 <%@page import="kr.ac.kopo.ctc.kopo44.dto.Pagination"%>
+<%@page import="kr.ac.kopo.ctc.kopo44.dto.ScoreItemDto"%>
 <%@page import="java.util.List"%>
 <!DOCTYPE html>
 <html>
@@ -21,25 +22,14 @@
 			<td align=center>수학</td>
 		</tr>
 		<%
-		//String strcPage = request.getParameter("strcPage");
-		String strcPage = "1";
-		ScoreItemService scoreItemService = new ScoreItemServiceImpl();
-		List<ScoreItem> scoreItems = scoreItemService.selectAll(strcPage);
-		
-		
-		
-		final int COUNT_PER_PAGE = 10;
-		final int PAGE_SIZE = 10;
-		final int TOTAL_COUNT = scoreItemService.getRowCount();
-		
-		//int currPage = Integer.parseInt(request.getParameter("currPage"));
-
-		//scoreItemService.getPagination(currPage, COUNT_PER_PAGE, PAGE_SIZE, TOTAL_COUNT);
-		
-		
-		for (ScoreItem scoreItem : scoreItems) {
+				String strcPage = request.getParameter("strcPage");
+				
+				ScoreItemService scoreItemService = new ScoreItemServiceImpl();
+				List<ScoreItem> scoreItems = scoreItemService.selectAll(strcPage).getScoreItems();
+				Pagination pagination = scoreItemService.selectAll(strcPage).getPagenation();
+				
+				for (ScoreItem scoreItem : scoreItems) {
 		%>
-
 		<tr>
 			<td><a
 				href="/ScoreAdmin/selectOne.jsp?name=<%=scoreItem.getName()%>"><%=scoreItem.getName()%></a></td>
@@ -51,7 +41,23 @@
 			<%
 			}
 			%>
-		
 	</table>
+	<div>
+		<%
+		if(pagination.getcPage() > pagination.getPageSize()){
+			out.print("<a href='AllviewDB.jsp?strcPage="+pagination.getPpPage()+"'> << </a>");
+			out.print("<a href='AllviewDB.jsp?strcPage="+pagination.getpPage()+"'> < </a>");
+		}
+		int i = pagination.getFirstPage();
+		while(i <= pagination.getPageSize()	){
+			out.print("<a href='AllviewDB.jsp?strcPage="+i+"'> "+i+" </a>");
+			i++;
+		}
+		if(pagination.getFirstPage() + pagination.getPageSize() < pagination.getNnPage()){
+			out.print("<a href='AllviewDB.jsp?strcPage="+pagination.getNnPage()+"'> > </a>");
+			out.print("<a href='AllviewDB.jsp?strcPage="+pagination.getnPage()+"'> >> </a>");
+		}
+		%>
+	</div>
 </body>
 </html>

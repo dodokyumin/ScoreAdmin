@@ -10,6 +10,8 @@ public class Pagination {
 	private int countPerPage; // 한 페이지 당 글 갯수
 	private int PageSize; // 한 줄에 나타낼 페이지 갯수
 	private int totalCount;
+	private int firstPage;
+	private int lastPage;
 	
 	public int getPpPage() {
 		return ppPage;
@@ -58,6 +60,18 @@ public class Pagination {
 	}
 	public void setTotalCount(int totalCount) {
 		this.totalCount = totalCount;
+	}
+	public int getFirstPage() {
+		return firstPage;
+	}
+	public void setFirstPage(int firstPage) {
+		this.firstPage = firstPage;
+	}
+	public int getLastPage() {
+		return lastPage;
+	}
+	public void setLastPage(int lastPage) {
+		this.lastPage = lastPage;
 	}
 	
 }

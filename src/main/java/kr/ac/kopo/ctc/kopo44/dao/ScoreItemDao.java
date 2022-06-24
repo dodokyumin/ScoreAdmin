@@ -19,7 +19,7 @@ public interface ScoreItemDao {
 	ScoreItem selectOne(int studentid);
 
 	// 여러개(리스트) 읽는(가져오는)
-	List<ScoreItem> selectAll(int page, int countPerPage);
+	List<ScoreItem> selectAll(int startIndex, int countPerPage);
 
 	// update
 	ScoreItem updatetOne(ScoreItem ScoreItem);
