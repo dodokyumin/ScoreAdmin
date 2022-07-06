@@ -20,6 +20,7 @@ public class ScoreItemDaoImpl implements ScoreItemDao {
 	public ScoreItemDaoImpl() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
+
 		} catch (ClassNotFoundException e) {
 			throw new IllegalStateException("jdbc 드라이버 로드 실패..!");
 		}
@@ -30,12 +31,14 @@ public class ScoreItemDaoImpl implements ScoreItemDao {
 	public ScoreItem insertOne(ScoreItem scoreItem) {
 		// PreparedStatement 동적 쿼리 생성 : Insert, update, delete 여러번 할 때 고속
 		String sql = "INSERT INTO " + TABLE_NAME + " VALUES (?, ?, ?, ?, ?)";
+
 		int result = 0;
+
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:33063/koposw44", "root", "koposw44");
 				PreparedStatement pstmt = conn.prepareStatement(sql);) {
 
 			pstmt.setString(1, scoreItem.getName());
-			pstmt.setInt(2, scoreItem.getStudentid());
+			pstmt.setInt(2, newStudentid());
 			pstmt.setInt(3, scoreItem.getKor());
 			pstmt.setInt(4, scoreItem.getEng());
 			pstmt.setInt(5, scoreItem.getMat());
@@ -131,13 +134,13 @@ public class ScoreItemDaoImpl implements ScoreItemDao {
 	@Override
 	public ScoreItem selectOne(int studentid) {
 		String sql = "SELECT * FROM " + TABLE_NAME + " WHERE studentid=" + studentid;
-		ScoreItem scoreItem;
+		ScoreItem scoreItem = new ScoreItem();
 		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:33063/koposw44", "root", "koposw44");
 				PreparedStatement pstmt = conn.prepareStatement(sql);) {
 
 			try (ResultSet rs = pstmt.executeQuery(sql);) {
 				rs.next();
-				scoreItem = new ScoreItem();
+				// scoreItem = new ScoreItem();
 				scoreItem.setName(rs.getString("name"));
 				scoreItem.setStudentid(rs.getInt("studentid"));
 				scoreItem.setKor(rs.getInt("kor"));
@@ -154,13 +157,11 @@ public class ScoreItemDaoImpl implements ScoreItemDao {
 
 	@Override
 	public int RowCount() {
-		
+
 		int rowcount = 0;
-		try (
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:33063/koposw44", "root", "koposw44");
-			Statement stmt = conn.createStatement();
-			ResultSet rset = stmt.executeQuery("SELECT COUNT(*) FROM " + TABLE_NAME);
-			){
+		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:33063/koposw44", "root", "koposw44");
+				Statement stmt = conn.createStatement();
+				ResultSet rset = stmt.executeQuery("SELECT COUNT(*) FROM " + TABLE_NAME);) {
 
 			while (rset.next()) {
 				rowcount = rset.getInt(1);
@@ -172,4 +173,31 @@ public class ScoreItemDaoImpl implements ScoreItemDao {
 		return rowcount;
 	}
 
+	@Override
+	public int newStudentid() {
+		int count = 1;
+		int newId = 0;
+		
+		try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:33063/koposw44", "root",
+				"koposw44");) {
+
+			// 학번 자동 생성기.
+			Statement stmt = conn.createStatement();
+			
+			ResultSet rset = stmt.executeQuery("select * from " + TABLE_NAME + " order by studentid");
+			while (rset.next()) {
+				if (rset.getInt(2) != (209900 + count)) {
+					break;
+				}
+				count++;
+			}
+			newId = 209900 + count;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return newId;
+
+	}
 }

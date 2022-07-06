@@ -1,8 +1,9 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@page import="kr.ac.kopo.ctc.kopo44.service.ScoreItemServiceImpl"%>
-<%@page import="kr.ac.kopo.ctc.kopo44.service.ScoreItemService"%>
-<%@page import="kr.ac.kopo.ctc.kopo44.domain.ScoreItem"%>
+<%@page import="kr.ac.kopo.ctc.kopo444.service.ScoreItemServiceImpl"%>
+<%@page import="kr.ac.kopo.ctc.kopo444.service.ScoreItemService"%>
+<%@page import="kr.ac.kopo.ctc.kopo444.domain.ScoreItem"%>
 <%@page import="kr.ac.kopo.ctc.kopo44.dto.Pagination"%>
 <%@page import="kr.ac.kopo.ctc.kopo44.dto.ScoreItemDto"%>
 <%@page import="java.util.List"%>
@@ -10,9 +11,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>전교생 성적 조회</title>
 </head>
 <body>
+	<h1>전교생 성적 조회</h1>
 	<table cellspacing=1 width=400 border=1>
 		<tr>
 			<td align=center>이름</td>
@@ -23,41 +25,62 @@
 		</tr>
 		<%
 				String strcPage = request.getParameter("strcPage");
-				
 				ScoreItemService scoreItemService = new ScoreItemServiceImpl();
-				List<ScoreItem> scoreItems = scoreItemService.selectAll(strcPage).getScoreItems();
-				Pagination pagination = scoreItemService.selectAll(strcPage).getPagenation();
+				List<ScoreItem> scoreItems = scoreItemService.selectAll(strcPage);
+				Pagination pagination = scoreItemService.getPagination(strcPage);
 				
-				for (ScoreItem scoreItem : scoreItems) {
-		%>
+				ServletContext context = getServletContext();
+				context.setAttribute("scoreItems", scoreItems);
+				context.setAttribute("pagination", pagination);	
+		%>		
+
+		<c:forEach var="scoreItem" items="${scoreItems}">
 		<tr>
-			<td><a
-				href="/ScoreAdmin/selectOne.jsp?name=<%=scoreItem.getName()%>"><%=scoreItem.getName()%></a></td>
-			<td><%=scoreItem.getStudentid()%></td>
-			<td><%=scoreItem.getKor()%></td>
-			<td><%=scoreItem.getEng()%></td>
-			<td><%=scoreItem.getMat()%></td>
+			<td><p class="center"><a href="selectOne.jsp?studentid=${scoreItem.studentid}">${scoreItem.name}</a></td>
+			<td><p class="center">${scoreItem.studentid}</td>
+					<td><p class="center">${scoreItem.kor}</td>
+					<td><p class="center">${scoreItem.eng}</td>
+					<td><p class="center">${scoreItem.mat}</td>
 		<tr>
-			<%
-			}
-			%>
+		</c:forEach>
 	</table>
 	<div>
-		<%
-		if(pagination.getcPage() > pagination.getPageSize()){
-			out.print("<a href='AllviewDB.jsp?strcPage="+pagination.getPpPage()+"'> << </a>");
-			out.print("<a href='AllviewDB.jsp?strcPage="+pagination.getpPage()+"'> < </a>");
-		}
-		int i = pagination.getFirstPage();
-		while(i <= pagination.getPageSize()	){
+		
+		<c:if test="${pagination.getcPage() > pagination.getPageSize()}">
+		<!--  if(pagination.getcPage() > pagination.getPageSize()){ -->
+			<a href='AllviewDB.jsp?strcPage=${pagination.getPpPage()}'> << </a>
+			<a href='AllviewDB.jsp?strcPage=${pagination.getpPage()}'> < </a>
+		<!-- //} -->
+		</c:if>
+		
+		<!-- int i = pagination.getFirstPage(); -->
+		
+		
+		<!-- context.setAttribute("scoreItems", scoreItems); -->
+		
+		<c:forEach var="noPage" begin="${pagination.firstPage}" end="${pagination.lastPage}">
+			<c:if test="${noPage != 0}">
+				<c:choose>
+					<c:when test="${noPage == pagination.cPage}">
+						<b><a style='text-decoration: underline;' href='AllviewDB.jsp?strcPage=${noPage}'>${noPage}</a></b>
+					</c:when>
+					<c:when test="${noPage != pagination.getcPage()}">
+						<a href='AllviewDB.jsp?strcPage=${noPage}'>${noPage}</a>
+					</c:when>
+				</c:choose>
+			</c:if>
+		<!--  for(int i = pagination.getFirstPage(); i <= pagination.getLastPage(); pagination.setFirstPage(pagination.getFirstPage() + 1)){
 			out.print("<a href='AllviewDB.jsp?strcPage="+i+"'> "+i+" </a>");
-			i++;
-		}
-		if(pagination.getFirstPage() + pagination.getPageSize() < pagination.getNnPage()){
-			out.print("<a href='AllviewDB.jsp?strcPage="+pagination.getNnPage()+"'> > </a>");
-			out.print("<a href='AllviewDB.jsp?strcPage="+pagination.getnPage()+"'> >> </a>");
-		}
-		%>
+		} -->
+		</c:forEach>
+		
+		
+		<c:if test="${pagination.firstPage + pagination.pageSize <= pagination.nnPage}">
+		<!--  if(pagination.getFirstPage() + pagination.getPageSize() <= pagination.getNnPage()){ -->
+			<a href='AllviewDB.jsp?strcPage=${pagination.nPage}'> > </a>
+			<a href='AllviewDB.jsp?strcPage=${pagination.nnPage}'> >> </a>
+		<!-- } -->
+		</c:if>
 	</div>
 </body>
 </html>

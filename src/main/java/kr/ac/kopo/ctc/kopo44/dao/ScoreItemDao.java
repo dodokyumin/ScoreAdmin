@@ -29,4 +29,6 @@ public interface ScoreItemDao {
 
 	// 테이블 내용 총 갯수 확인하기
 	int RowCount();
+	
+	int newStudentid();
 }

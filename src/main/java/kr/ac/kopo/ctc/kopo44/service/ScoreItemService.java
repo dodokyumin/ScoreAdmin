@@ -1,5 +1,7 @@
 package kr.ac.kopo.ctc.kopo44.service;
 
+import java.util.List;
+
 import kr.ac.kopo.ctc.kopo44.domain.ScoreItem;
 import kr.ac.kopo.ctc.kopo44.dto.Pagination;
 import kr.ac.kopo.ctc.kopo44.dto.ScoreItemDto;
@@ -11,23 +13,26 @@ public interface ScoreItemService {
 	//void setScoreItemDao(ScoreItemDao scoreItemDao);
 	
 	//조회
-	ScoreItem selectOne(int id);
+	ScoreItem selectOne(String id);
 	
-	ScoreItemDto selectAll(String strcPage);
+	List<ScoreItem> selectAll(String strcPage);
 	
-	Pagination getPagination(int currPage, int countPerPage, int pageSize, int totalCount);
+	//페이지 불러오기
+	Pagination getPagination(String strcPage);
 	
 	//입력
-	boolean scoreItemInsertOne(String name, String kor, String eng, String mat);
+	ScoreItem scoreItemInsertOne(String name, String kor, String eng, String mat);
 	
 	// 수정
-	boolean scoreItemUpdateOne(String name, String id, String kor, String eng, String mat);
+	ScoreItem scoreItemUpdateOne(String name, String id, String kor, String eng, String mat);
 	
 	// 삭제
 	boolean scoreItemDeleteOne(int id);
 	
 	//총 갯수
 	int getRowCount();
+	
+	
 
 
 	
